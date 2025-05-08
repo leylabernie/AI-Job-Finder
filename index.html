@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Finder - Affiliate Ready</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; 
+        }
+        .container {
+            max-width: 900px; 
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header-title {
+            font-size: 2.5rem; 
+            font-weight: 700;
+            color: #1e3a8a; 
+        }
+        .header-subtitle {
+            font-size: 1.1rem; 
+            color: #4b5563; 
+        }
+
+        .card { /* Main input card & affiliate card styling */
+            background-color: #ffffff;
+            border-radius: 12px; 
+            padding: 24px; 
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15); 
+        }
+        .card-title { /* Title within cards */
+            font-size: 1.5rem; 
+            font-weight: 600;
+            color: #1f2937; 
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-label {
+            font-size: 0.875rem; 
+            font-weight: 500;
+            color: #374151; 
+            margin-bottom: 6px; 
+            display: block;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            color: #1f2937; 
+            background-color: #ffffff; 
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #2563eb; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
+        }
+        textarea.input-field {
+            min-height: 120px; 
+        }
+
+        .btn {
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-weight: 600;
+            font-size: 1rem; 
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background-color: #2563eb; 
+            color: white;
+            border: 1px solid transparent;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8; 
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0px) scale(0.98);
+            background-color: #1e40af;
+        }
+        .btn-secondary { 
+            background-color: #6b7280; 
+            color: white;
+            border: 1px solid transparent;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; 
+            transform: translateY(-1px);
+        }
+        .btn-sm { 
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Job Result Card Styling */
+        .job-result-card {
+            background-color: #ffffff; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px;       
+            padding: 20px;            
+        }
+        .job-result-card .job-title { 
+            font-size: 1.25rem; 
+            font-weight: 600;
+            color: #1e3a8a; 
+            margin-bottom: 2px; 
+        }
+        .job-result-card .job-company { 
+            font-size: 0.95rem;  
+            color: #374151;    
+            margin-bottom: 12px; 
+            font-weight: 500;
+        }
+        .job-result-card .job-snippet { 
+            font-size: 0.875rem; 
+            color: #4b5563;    
+            line-height: 1.65;  
+            margin-bottom: 16px; 
+        }
+        
+        /* Affiliate Section Styling */
+        .affiliate-card {
+            /* Uses .card styling by default */
+            border-left: 4px solid #10b981; /* Emerald green accent for affiliate section */
+        }
+        .affiliate-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6; /* Light border between items */
+        }
+        .affiliate-item:last-child {
+            border-bottom: none;
+        }
+        .affiliate-link {
+            font-weight: 500;
+            color: #059669; /* Darker emerald for links */
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .affiliate-link:hover {
+            color: #047857;
+            text-decoration: underline;
+        }
+        .affiliate-description {
+            font-size: 0.875rem;
+            color: #6b7280; /* Gray-500 */
+            margin-top: 4px;
+        }
+
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1); 
+            border-left-color: #2563eb; 
+            border-radius: 50%;
+            width: 32px; 
+            height: 32px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message { 
+            background-color: #fee2e2; 
+            color: #991b1b; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-top: 16px;
+            text-align: center;
+            border: 1px solid #fecaca; 
+            font-weight: 500;
+        }
+        .no-results-message, .ai-processing-message { 
+            color: #4b5563; 
+            text-align: center;
+            padding: 20px; 
+            font-style: italic;
+            font-size: 0.95rem; 
+            background-color: #f9fafb; 
+            border-radius: 8px;
+        }
+        .search-icon { 
+            width: 20px;
+            height: 20px;
+            margin-right: 8px; 
+            stroke: currentColor;
+            stroke-width: 2; 
+        }
+        .section-title { 
+            font-size: 1.75rem; 
+            font-weight: 600;
+            color: #1f2937; 
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center py-8"> 
+            <h1 class="header-title">AI Job Finder</h1>
+            <p class="header-subtitle mt-2">Your intelligent assistant for discovering career opportunities.</p>
+        </header>
+
+        <div class="card">
+            <h2 class="card-title">Your Profile & Preferences</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1"> 
+                <div class="input-group">
+                    <label for="resumeText" class="input-label">Resume Highlights / Key Skills</label>
+                    <textarea id="resumeText" class="input-field" placeholder="e.g., Python, JavaScript, Project Management..."></textarea>
+                </div>
+                <div>
+                    <div class="input-group">
+                        <label for="jobTitle" class="input-label">Desired Job Title / Role</label>
+                        <input type="text" id="jobTitle" class="input-field" placeholder="e.g., Software Engineer">
+                    </div>
+                    <div class="input-group">
+                        <label for="location" class="input-label">Location</label>
+                        <input type="text" id="location" class="input-field" placeholder="e.g., Remote, New York">
+                    </div>
+                    <div class="input-group">
+                        <label for="keywords" class="input-label">Additional Keywords <span class="text-gray-400 text-xs">(optional)</span></label>
+                        <input type="text" id="keywords" class="input-field" placeholder="e.g., fintech, AI, part-time">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button id="findJobsBtn" class="btn btn-primary">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Find My Next Job
+                </button>
+            </div>
+        </div>
+
+        <div class="card affiliate-card">
+            <h2 class="card-title">Recommended Career Resources</h2>
+            <div id="affiliateLinksContainer">
+                <div class="affiliate-item">
+                    <a href="your-affiliate-link-for-course1.com" target="_blank" rel="noopener sponsored" class="affiliate-link">
+                        Top-Rated Resume Writing Course
+                    </a>
+                    <p class="affiliate-description">Learn how to craft a resume that gets noticed by recruiters. Limited time offer!</p>
+                </div>
+                <div class="affiliate-item">
+                    <a href="your-affiliate-link-for-tool2.com" target="_blank" rel="noopener sponsored" class="affiliate-link">
+                        Interview Preparation Toolkit
+                    </a>
+                    <p class="affiliate-description">Ace your next interview with this comprehensive toolkit and expert tips.</p>
+                </div>
+                <div class="affiliate-item">
+                    <a href="your-affiliate-link-for-service3.com" target="_blank" rel="noopener sponsored" class="affiliate-link">
+                        Professional LinkedIn Profile Makeover
+                    </a>
+                    <p class="affiliate-description">Optimize your LinkedIn profile to attract job offers from top companies.</p>
+                </div>
+                </div>
+            <p class="text-xs text-gray-400 mt-4">
+                Disclosure: Some of the links above are affiliate links, meaning, at no additional cost to you, we may earn a commission if you click through and make a purchase.
+            </p>
+        </div>
+
+
+        <div id="loadingIndicator" class="hidden loading-spinner"></div>
+        <div id="errorMessage" class="hidden error-message"></div>
+
+        <div id="resultsSection" class="mt-8"> 
+            <h2 class="section-title">Matching Job Postings</h2>
+            <div id="jobResults" class="space-y-4"> 
+                <p id="noResultsMessage" class="no-results-message">Enter your preferences above and click "Find My Next Job". The AI will then search for you.</p>
+            </div>
+        </div>
+
+        <footer class="text-center py-8 mt-12 text-sm text-gray-500"> 
+            <p>&copy; <span id="currentYear"></span> AI Job Finder. Your smart career companion.</p>
+            <p>Job applications are processed on external websites.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // DOM Elements
+        const findJobsBtn = document.getElementById('findJobsBtn');
+        const resumeTextEl = document.getElementById('resumeText');
+        const jobTitleEl = document.getElementById('jobTitle');
+        const locationEl = document.getElementById('location');
+        const keywordsEl = document.getElementById('keywords');
+        const jobResultsEl = document.getElementById('jobResults');
+        const loadingIndicatorEl = document.getElementById('loadingIndicator');
+        const errorMessageEl = document.getElementById('errorMessage');
+        
+        // Event listener for the "Find Jobs" button
+        findJobsBtn.addEventListener('click', () => {
+            // Clear previous results or messages from the jobResults area
+            jobResultsEl.innerHTML = ''; 
+            errorMessageEl.classList.add('hidden'); // Hide any previous error messages
+            errorMessageEl.textContent = '';
+            
+            loadingIndicatorEl.classList.remove('hidden'); // Show loading indicator briefly
+
+            // Get user inputs
+            const resumeKeywords = resumeTextEl.value.trim();
+            const jobTitle = jobTitleEl.value.trim();
+            const location = locationEl.value.trim();
+            const additionalKeywords = keywordsEl.value.trim();
+
+            // Basic client-side validation
+            if (!jobTitle && !resumeKeywords) {
+                loadingIndicatorEl.classList.add('hidden'); // Hide spinner
+                errorMessageEl.textContent = 'Please enter a desired job title or some resume keywords.';
+                errorMessageEl.classList.remove('hidden'); // Show validation error
+                // Restore the initial "no results" message if validation fails
+                jobResultsEl.innerHTML = '<p id="noResultsMessage" class="no-results-message">Enter your preferences above and click "Find My Next Job". The AI will then search for you.</p>';
+                return;
+            }
+
+            // Construct search query string
+            let searchQuery = `job postings for ${jobTitle}`;
+            if (location) {
+                searchQuery += ` in ${location}`;
+            }
+            if (resumeKeywords) {
+                searchQuery += ` related to ${resumeKeywords}`;
+            }
+            if (additionalKeywords) {
+                searchQuery += ` with keywords ${additionalKeywords}`;
+            }
+            // Add common job sites to the query for better relevance
+            searchQuery += " site:linkedin.com OR site:indeed.com OR site:ziprecruiter.com OR site:glassdoor.com OR site:careers.google.com OR site:google.com/careers";
+
+            // Log the constructed query to the console for the AI (me) to pick up
+            console.log(`JOB_SEARCH_QUERY_READY::${searchQuery}`);
+
+            // Update UI to inform the user that the query is ready for AI processing
+            loadingIndicatorEl.classList.add('hidden'); // Hide spinner
+            jobResultsEl.innerHTML = '<p class="ai-processing-message">Your search query has been prepared. The AI will now fetch job listings based on your criteria. Results will appear here once processed.</p>';
+            
+            // At this point, the user needs to copy the console log and send it to the AI.
+            // The AI will then provide updated HTML with the results,
+            // which will include a call to window.displayJobResults(actualResults).
+        });
+
+        // Function to display job results (will be called by AI-provided script later)
+        function displayJobResults(results) {
+            jobResultsEl.innerHTML = ''; // Clear "AI processing" message or previous results
+
+            if (!results || results.length === 0) {
+                // If no results are found, display a message
+                const messageEl = document.createElement('p');
+                messageEl.id = 'noResultsMessage'; // Re-add id if needed
+                messageEl.className = 'no-results-message';
+                messageEl.textContent = 'No jobs found by the AI matching your criteria. Try broadening your search terms.';
+                jobResultsEl.appendChild(messageEl);
+                return;
+            }
+
+            // If results are found, create and append a card for each job
+            results.forEach(job => {
+                const card = document.createElement('div');
+                card.className = 'job-result-card'; // Uses the styling defined in the <style> block
+
+                const titleEl = document.createElement('h3');
+                titleEl.className = 'job-title'; // Uses the styling defined in the <style> block
+                titleEl.textContent = job.source_title || 'Job Title N/A'; // Use source_title from search result
+
+                const companyEl = document.createElement('p');
+                companyEl.className = 'job-company'; // Uses the styling defined in the <style> block
+                let companyName = 'Company N/A';
+
+                // Attempt to extract company name from snippet or URL (heuristic)
+                if (job.snippet) {
+                    const snippetParts = job.snippet.split(/ at | - /); // Split by " at " or " - "
+                    if (snippetParts.length > 0) {
+                        let potentialCompany = snippetParts[0].trim();
+                        // Avoid using the job title itself if it appears first in the snippet
+                        if (!(job.source_title || '').toLowerCase().includes(potentialCompany.toLowerCase()) && potentialCompany.length < 70 && potentialCompany.length > 1) {
+                            companyName = potentialCompany;
+                        } else if (snippetParts.length > 1) { // Try the part after "at" or "-"
+                            potentialCompany = snippetParts[1].trim();
+                             if (!(job.source_title || '').toLowerCase().includes(potentialCompany.toLowerCase()) && potentialCompany.length < 70 && potentialCompany.length > 1) {
+                                companyName = potentialCompany;
+                            }
+                        }
+                    }
+                }
+                
+                // Fallback to hostname if company name couldn't be reliably extracted or is same as title
+                if ((companyName === 'Company N/A' || (job.source_title && companyName.toLowerCase() === job.source_title.toLowerCase())) && job.url) {
+                    try {
+                        const urlObj = new URL(job.url);
+                        let host = urlObj.hostname.replace(/^www\./, '');
+                        const hostParts = host.split('.');
+                        // Prefer the part before the TLD (e.g., 'google' from 'careers.google.com')
+                        companyName = hostParts.length > 1 ? hostParts[hostParts.length - 2] : hostParts[0];
+                        companyName = companyName.charAt(0).toUpperCase() + companyName.slice(1); // Capitalize
+                    } catch (e) { /* Ignore invalid URL, companyName remains as is */ }
+                }
+                companyEl.textContent = companyName;
+
+                const snippetEl = document.createElement('p');
+                snippetEl.className = 'job-snippet'; // Uses the styling defined in the <style> block
+                
+                // Truncate snippet text if it's too long
+                let snippetText = job.snippet || 'No description available.';
+                const maxLength = 250; // Define maximum characters for the snippet
+                if (snippetText.length > maxLength) {
+                    // Try to cut at the last space within the maxLength to avoid breaking words
+                    let lastSpace = snippetText.substring(0, maxLength).lastIndexOf(' ');
+                    if (lastSpace === -1) lastSpace = maxLength; // If no space found, cut at maxLength
+                    snippetText = snippetText.substring(0, lastSpace) + "...";
+                }
+
+                // Basic sanitization for snippet text and replace newlines with <br> for display
+                const tempDiv = document.createElement('div'); 
+                tempDiv.textContent = snippetText;
+                snippetEl.innerHTML = tempDiv.innerHTML.replace(/\n/g, '<br>');
+                
+                const linkEl = document.createElement('a');
+                linkEl.href = job.url; // URL from search result
+                
+                // Determine link text based on URL
+                let linkText = 'View & Apply'; // Default
+                if (job.url) {
+                    try {
+                        const urlObj = new URL(job.url);
+                        let hostname = urlObj.hostname.replace(/^www\./, ''); 
+                        // Capitalize the first letter of the hostname for better display
+                        hostname = hostname.charAt(0).toUpperCase() + hostname.slice(1);
+                        linkText = `View on ${hostname}`;
+                    } catch (e) {
+                        linkText = 'View Original Post'; // Fallback if URL parsing fails
+                    }
+                } else {
+                    linkText = 'More Info (No Direct Link)'; // Fallback if no URL
+                }
+                linkEl.textContent = linkText;
+
+                linkEl.className = 'btn btn-secondary btn-sm mt-3'; // Style as a secondary button, add margin top
+                linkEl.target = '_blank'; // Open link in a new tab
+                linkEl.rel = 'noopener noreferrer'; // Security best practice for external links
+
+                // Append elements to the job card
+                card.appendChild(titleEl);
+                card.appendChild(companyEl);
+                card.appendChild(snippetEl);
+                card.appendChild(linkEl); 
+                jobResultsEl.appendChild(card); // Add the job card to the results area
+            });
+        }
+        // Expose displayJobResults globally so it can be called by a script
+        // that the AI will inject later when providing the search results.
+        window.displayJobResults = displayJobResults;
+    </script>
+
+    <script>
+      (function() {
+        // This data is from a previous search ("Senior Systems Engineer") and will be displayed when the page loads.
+        // For a new search, the AI would provide updated HTML with new data in this section.
+        const searchResultsFromAIString = '[{"index":"1.1","publication_time":null,"snippet":"Systems Engineer Vmware Jobs (NOW HIRING) in Chicago, IL\\n\\n- VMware Administrator/Systems Engineer. Govcio LLC. San Antonio, TX. $75K - $98K / yr. GovCIO is currently looking for a VMware Administrator/Systems Engineer for our Courts proposal. This position will be located in San Antonio, TX. This position requires.\\n- Senior Systems Engineer VMware VDI. AppLab Systems, Inc. Remote, OR. $104K - $143K / yr Estimated pay. Senior Systems Engineer VMware VDI.\\n- Systems Engineer. Forge Forward, Inc. Pearl City, HI. $120K - $160K / yr. Forge Forward is searching for a Systems Engineer to support a client in Pearl City, HI. This ... Strong knowledge of VDI technologies, including VMware.\\n- Virtulization Engineer(VMware & vSphere Exp) || Meridian, Idaho (Onsite) Inficare Technologies. Nampa, ID. $48.25 - $60.50 / hr Estimated pay. Virtulization Engineer (VMware & vSphere Exp) Job Type: Contract Job Location: Meridian, Idaho ... System monitoring and optimization * Solarwinds (a plus, but not.\\n- Security Engineer (VMWare vSphere environments) - Onsite Role. Centraprise. Las Vegas, NV. Security Engineer (VMWare vSphere environments) - Onsite Role Work Location Las Vegas, NV Shift ... security systems including SIEM, IDS/IPS, Next Generation.\\n- Cloud Systems Engineer. Central Pacific Bank. Honolulu, HI. $70K - $96K / yr. Assists the Senior Cloud Systems Engineer with complex projects as assigned. Operates across ... Configuring and managing virtualization platforms (e.g.,\\n- IT Infrastructure Engineer, VMware. SpaceX. Hawthorne, CA. $120K - $160K / yr. IT INFRASTRUCTURE ENGINEER, VMWARE As an IT Infrastructure Engineer within the infrastructure team ... You will ensure the quality and reliability of systems.\\n- Senior Systems Engineer - VMWare. Artech Information System LLC. Westlake Village, CA. $110K - $150K / yr Estimated pay. VMware Subject Matter Expert Qualifications BS in computer science, math or related field Minimum of 8 years of experience in Systems.\\n- Systems Engineer- VMware, VDI, HCI. Freedom Financial Network. Tempe, AZ. As a part of the Infrastructure team, the Systems Engineer position focuses heavily on working ... Minimum of 3 years\' VMware support in a corporate environment *\\n- Engineer III - VMware and Windows. Inland Empire Health Plan. Rancho Cucamonga, CA. $119K - $196K / yr. Under the direction of the Manager, Compute and Collaboration, the Engineer III - VMware and ... Process changes to system software and hardware so that performance.\\n- Sr. Systems Engineer. KP LLC. Herriman, UT. $90K - $120K / yr. They will be the technical lead for all of KP\'s infrastructure, encompassing Windows, VMware and ... The Sr. Systems Engineer is a seasoned professional, proactive.\\n- Systems Engineer: Azure, Entra ID, Intune (1K+ end points), Windows Server, VMware. KORE1 Technologies. Agoura Hills, CA. $115 / hr. KORE1, a nationwide provider of staffing and recruiting solutions, has an immediate opening for a Systems Engineer: Azure, Entra ID, Intune (1K+ end points), Windows Server,\\n- IT Network and Systems Engineer. WCP Solutions. Kent, WA. $120,000 / yr. IT Network and Systems Engineer: The IT Network and Systems Engineer is a member of a team ... or VMWare. o Experience maintaining enterprise grade SAN.\\n- Senior Pre-Sales Systems Engineer, Commercial - Chicago. Pure Storage. Chicago, IL. $137K - $207K / yr. As a Senior Pre-Sales Systems Engineer, you will play a crucial role in understanding our customers ... Knowledge of VMware, Local Area Networking, Ethernet,\\n- Senior System Engineer(VMware) Two95 International Inc. Los Angeles, CA. $56 - $70 / hr Estimated pay. Senior System Engineer(VMware) Job type: Full Time / Permanent Position Job location: Los Angeles ... VMware, including vSphere v5.x 6+ years of experience.","source_title":"$98k-$175k Systems Engineer Vmware Jobs - ZipRecruiter","url":"https://www.ziprecruiter.com/Jobs/Systems-Engineer-Vmware"},{"index":"1.2","publication_time":null,"snippet":"Candidate Navigation\\n\\n- Jobs.\\n- Messages.\\n- Settings. Alerts Mobile App Blog Support Sign In.\\n...\\n- Part time.\\n- Full time.\\n- Entry level.\\n...\\nCloud Systems Engineer\\n\\n- $70K to $96K Annually.\\n- Full-Time.\\n...\\nSenior Network Systems Analyst\\n\\n- $100K to $122K Annually.\\n- Full-Time.\\n...\\nNational Defense Network Information Assurance/ACAS Senior Engineer (SME)\\n\\n- $82K to $87K Annually.\\n- Full-Time.\\n\\nWe seek a passionate, INFORMATION SECURITY ANALYST SENIOR/ACAS Engineer to support of the Army VMware Virtualization HP hardware • Dell hardware • Red Hat Linux System Administration (SA Report Job. Quick Apply.\\n\\nSenior Analyst, MarTech Engineering & Innovation\\n\\n- $72K to $90K Annually.\\n- Full-Time.\\n...\\nBlastX Consulting Roseville, CA.\\n...\\nOur MarTech Engineering & Innovation team is seeking a Senior Analyst with a strong consultative approach, passion for driving value for clients and experience creating strategies around MarTech Report Job. Quick Apply. Sr Database Architect.\\n\\nNEW!\\n\\n- $140,000 Annually.\\n- Vision Medical Life Insurance Dental.\\n- Full-Time.\\n...\\nProtek Consulting Ogden, UT.\\n...\\nSr. Systems Engineer\\n\\n- $90K to $120K Annually.\\n- Full-Time.\\n...\\nEngineer I/II/III\\n\\n- $60K to $80K Annually.\\n- Full-Time.\\n...\\nSenior Systems & Security Engineer\\n\\n- $76K to $140K Annually.\\n- Full-Time.\\n...\\nNEW!\\n\\n- $70K to $90K Annually.\\n- Vision Medical Life Insurance Dental.\\n- Full-Time.\\n...\\nSENIOR SYSTEM/NETWORK ENGINEER\\n\\n- $115K to $135K Annually.\\n- Full-Time.\\n\\nAs a Senior Systems/Network Engineer will support the analysis and engineering, system architecture AWS, Azure, Oracle, Google, or VMware Cloud architect certification or similar * Experience with Report Job. Quick Apply.\\n\\nVMware Engineer\\n\\n- $67.59 to $68.97 Hourly.\\n- Full-Time.\\n...\\nTEKsystems Olathe, KS.\\n...\\nAnalyze performance data, identify root causes of performance issues, and implement optimization\\n...\\nSr. Accounting Analyst, Field Finance\\n\\n- $67K to $75K Annually.\\n- Full-Time.\\n...\\nSystems Engineer: Azure, Entra ID, Intune (1K+ end points), Windows Server, VMware\\n\\n- $115 Hourly.\\n- Full-Time.\\n...\\nSenior Level Network/Systems Engineer - MSP with Cloud Expertise\\n\\n- $80K to $100K Annually.\\n- Vision Medical Dental.\\n- Full-Time.\\n\\nProficiency in virtualization (Hyper-V or VMware). * Experience with remote access solutions: VPN We are excited to welcome a Senior Level Network/Systems. Report Job. Quick Apply.\\n\\nSenior Provider Network Analyst (Functional Program Analyst 4)\\n\\n- $5,501 to $7,400 Monthly.\\n- Full-Time.\\n...\\nState of Washington Olympia, WA.\\n...\\nThe Senior Provider Network Analyst of the Provider Network Unit ensures the timely, consistent, and accurate independent analysis, evaluation and approval or disapproval of state-wide health, vision Report Job.\\n\\nSenior Systems Engineer\\n\\n- $100K to $140K Annually.\\n- Vision Medical Life Insurance Dental.\\n- Full-Time.\\n...\\nKLH Consulting, Inc. Santa Rosa, CA.\\n...\\nSenior GIS Analyst / GIS Analyst (Non-Remote)\\n\\n- $72K to $132K Annually.\\n- Full-Time.\\n...\\nSr. Financial Analyst (Hybrid/Remote)\\n\\n- $100K to $125K Annually.\\n- Full-Time.\\n...\\nSr. Network Systems Administrator\\n\\n- $110K to $125K Annually.\\n- Vision Medical Life Insurance Dental.\\n- Full-Time.\\n...\\nSenior Network Engineer\\n\\n- $110K to $125K Annually.\\n- Full-Time.\\n...\\nHow much do senior network analyst vmware engineer jobs pay per year?\\n\\n- $91,000 - $99,999. 5% of jobs.\\n- $100,000 - $108,999. 5% of jobs.\\n- $109,000 - $117,999. 5% of jobs.\\n- $118,000 - $126,999. 9% of jobs.\\n- $127,000 is the 25th percentile. Salaries below this are outliers. $127,000 - $135,999. 13% of jobs.\\n- The average salary is $142,750 a year $136,000 - $144,499. 15% of jobs.\\n- $144,500 - $153,499.\\n- $157,000 is the 75th percentile. Salaries above this are outliers. $153,500 - $162,499. 14% of jobs.\\n- $162,500 - $171,499. 5% of jobs.\\n- $180,000 is the 90th percentile. Salaries above this are outliers. $171,500 - $180,499. 3% of jobs.\\n- $180,500 - $189,500. 4% of jobs.\\n...\\nSmall & Medium Businesses\\n\\n- Post a Job.\\n- Vendor Comparison.\\n...\\nCompany\\n\\n- About Us.\\n- Blog.\\n- Engineering.\\n\\n- Privacy Policy.\\n- Terms of Use.","source_title":"Senior network analyst vmware engineer jobs - ZipRecruiter","url":"https://www.ziprecruiter.com/Jobs/Senior-Network-Analyst-Vmware-Engineer"}]';
+        const searchResultsFromAI = JSON.parse(searchResultsFromAIString);
+        
+        // Ensure the DOM is fully loaded before trying to display results.
+        // This is important to make sure the 'jobResultsEl' element exists when displayJobResults is called.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                if (window.displayJobResults) {
+                    window.displayJobResults(searchResultsFromAI);
+                } else {
+                    console.error('displayJobResults function not found after DOMContentLoaded.');
+                    const resultsDiv = document.getElementById('jobResults');
+                    // Display an error message directly in the jobResults div if the function is missing
+                    if (resultsDiv) resultsDiv.innerHTML = '<p class="error-message">Error: Could not initialize job results display function.</p>';
+                }
+            });
+        } else {
+            // DOM is already loaded, safe to call immediately
+            if (window.displayJobResults) {
+                window.displayJobResults(searchResultsFromAI);
+            } else {
+                console.error('displayJobResults function not found.');
+                const resultsDiv = document.getElementById('jobResults');
+                 // Display an error message directly in the jobResults div if the function is missing
+                if (resultsDiv) resultsDiv.innerHTML = '<p class="error-message">Error: Could not initialize job results display function.</p>';
+            }
+        }
+      })();
+    </script>
+
+</body>
+</html>
